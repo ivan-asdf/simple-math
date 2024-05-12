@@ -36,3 +36,16 @@ func (e SyntaxError) Error() string {
 		)
 	}
 }
+
+type UnsupportedOperationError struct {
+	op *token.Token
+}
+
+func (e UnsupportedOperationError) Error() string {
+	return fmt.Sprintf(
+		`Unsupported error: Unsupported operation "%s" at %d-%d`,
+    e.op.Value,
+		e.op.Begin,
+		e.op.End,
+  )
+}

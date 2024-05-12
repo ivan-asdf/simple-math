@@ -9,6 +9,10 @@ const (
 	QuestionMarkKeyword
 	Plus
 	Minus
+	MultipliedBy
+	DividedBy
+	Cubed
+	Squared
 	Number
 	Word
 	LEN

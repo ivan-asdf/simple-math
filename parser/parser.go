@@ -35,18 +35,17 @@ func (p *Parser) peekNextToken() *token.Token {
 	return &p.tokens[p.currentTokenIndex]
 }
 
-
 func (p *Parser) peekPrevToken() *token.Token {
 	if p.currentTokenIndex <= 0 {
 		return nil
 	}
-	return &p.tokens[p.currentTokenIndex - 1]
+	return &p.tokens[p.currentTokenIndex-1]
 }
 
 func (p *Parser) parseInitialKeyword() error {
 	t := p.getNextToken()
 	if t.Type != token.WhatIs {
-    return SyntaxError{expected: `"What is" keyword`}
+		return SyntaxError{expected: `"What is" keyword`}
 	}
 
 	return nil
@@ -56,14 +55,13 @@ func (p *Parser) parseExpression(prev *eval.Expr) (*eval.Expr, error) {
 	if prev == nil {
 		number, err := p.parseNumber()
 		if err != nil {
-      return nil, err
+			return nil, err
 		}
-		return &eval.Expr{Prev: prev, Op: "", Value: number}, nil
+		return &eval.Expr{Prev: prev, Op: eval.OP_NONE, Value: number}, nil
 	}
 
 	op, err := p.parseOp()
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	number, err := p.parseNumber()
@@ -76,11 +74,11 @@ func (p *Parser) parseExpression(prev *eval.Expr) (*eval.Expr, error) {
 func (p *Parser) parseNumber() (int, error) {
 	t := p.getNextToken()
 	if t == nil {
-    return 0, SyntaxError{expected: "number", after: p.peekPrevToken()}
+		return 0, SyntaxError{expected: "number", after: p.peekPrevToken()}
 	}
-  if t.Type != token.Number {
-    return 0, SyntaxError{expected: "number", got: t}
-  }
+	if t.Type != token.Number {
+		return 0, SyntaxError{expected: "number", got: t}
+	}
 	value, err := strconv.Atoi(t.Value)
 	if err != nil {
 		return 0, err
@@ -88,18 +86,26 @@ func (p *Parser) parseNumber() (int, error) {
 	return value, nil
 }
 
-func (p *Parser) parseOp() (string, error) {
+func (p *Parser) parseOp() (eval.Op, error) {
 	t := p.getNextToken()
 	if t == nil {
-    return "", SyntaxError{expected: "operation", after: p.peekPrevToken()}
+		return eval.OP_NONE, SyntaxError{expected: "operation", after: p.peekPrevToken()}
 	}
 	switch t.Type {
 	case token.Plus:
 		return eval.OP_PLUS, nil
 	case token.Minus:
 		return eval.OP_MINUS, nil
+	case token.MultipliedBy:
+		return eval.OP_MULTI, nil
+	case token.DividedBy:
+		return eval.OP_DIV, nil
+	case token.Cubed:
+		fallthrough
+	case token.Squared:
+		return eval.OP_NONE, UnsupportedOperationError{op: t}
 	}
-  return "", SyntaxError{expected: "operation", got: t}
+	return eval.OP_NONE, SyntaxError{expected: "operation", got: t}
 }
 func (p *Parser) Parse() error {
 	fmt.Println()
@@ -111,9 +117,9 @@ func (p *Parser) Parse() error {
 	var lastExpr *eval.Expr
 	for {
 		expr, err := p.parseExpression(lastExpr)
-    if err != nil {
-      return err
-    }
+		if err != nil {
+			return err
+		}
 		fmt.Println(expr)
 		if expr == nil {
 			break
@@ -122,13 +128,17 @@ func (p *Parser) Parse() error {
 
 		t := p.peekNextToken()
 		if t == nil {
-      return SyntaxError{expected: `termination keyword "?"`, after: p.peekPrevToken()}
+			return SyntaxError{expected: `termination keyword "?"`, after: p.peekPrevToken()}
 		} else if t.Type == token.QuestionMarkKeyword {
 			break
 		}
 	}
 	fmt.Println()
 	fmt.Println(lastExpr)
-	fmt.Println("EVAL RESULT: ", lastExpr.Evaluate())
+	result, err := lastExpr.Evaluate()
+	if err != nil {
+		return err
+	}
+	fmt.Println("EVAL RESULT: ", result)
 	return nil
 }

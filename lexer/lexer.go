@@ -18,11 +18,15 @@ func NewLexer(input string) *Lexer {
 		input: input,
 	}
 	var groupNamesPatterns [token.LEN]string
-	groupNamesPatterns[token.WhatIs] = `what is`
+	groupNamesPatterns[token.WhatIs] = `\bwhat is\b`
 	groupNamesPatterns[token.QuestionMarkKeyword] = `\?`
-	groupNamesPatterns[token.Plus] = `plus`
-	groupNamesPatterns[token.Minus] = `minus`
-	groupNamesPatterns[token.Number] = `\d+`
+	groupNamesPatterns[token.Plus] = `\bplus\b`
+	groupNamesPatterns[token.Minus] = `\bminus\b`
+	groupNamesPatterns[token.MultipliedBy] = `\bmultiplied by\b`
+	groupNamesPatterns[token.DividedBy] = `\bdivided by\b`
+	groupNamesPatterns[token.Cubed] = `\bcubed\b`
+	groupNamesPatterns[token.Squared] = `\bsquared\b`
+	groupNamesPatterns[token.Number] = `\b\d+\b`
 	groupNamesPatterns[token.Word] = `[^\s\?]+`
 
 	var patternStrings []string
