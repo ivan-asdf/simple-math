@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/ivan-asdf/simple-math/token"
@@ -32,67 +31,66 @@ func (p *Parser) peekNextToken() *token.Token {
 	if p.currentTokenIndex >= len(p.tokens) {
 		return nil
 	}
-	index := p.currentTokenIndex
-	return &p.tokens[index]
+	return &p.tokens[p.currentTokenIndex]
+}
+
+
+func (p *Parser) peekPrevToken() *token.Token {
+	if p.currentTokenIndex <= 0 {
+		return nil
+	}
+	return &p.tokens[p.currentTokenIndex - 1]
 }
 
 func (p *Parser) parseInitialKeyword() error {
 	t := p.getNextToken()
 	if t.Type != token.WhatIs {
-		return fmt.Errorf(`Syntax error: expected "What is" keyword`)
+    return SyntaxError{expected: `"What is" keyword`}
 	}
 
 	return nil
 }
 
-// add error return
-func (p *Parser) parseExpression(prev *Expr) *Expr {
+func (p *Parser) parseExpression(prev *Expr) (*Expr, error) {
 	if prev == nil {
 		number, err := p.parseNumber()
 		if err != nil {
-			// return err
-			fmt.Println("HERE")
-			return nil
+      return nil, err
 		}
-		return &Expr{Prev: prev, Op: "", Value: number}
+		return &Expr{Prev: prev, Op: "", Value: number}, nil
 	}
 
 	op, err := p.parseOp()
 	if err != nil {
-		// return err
 		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 	number, err := p.parseNumber()
 	if err != nil {
-		// return err
-		return nil
+		return nil, err
 	}
-	return &Expr{Prev: prev, Op: op, Value: number}
+	return &Expr{Prev: prev, Op: op, Value: number}, nil
 }
 
 func (p *Parser) parseNumber() (int, error) {
 	t := p.getNextToken()
-	// if t == nil {
-	// return 0, fmt.Errorf("Syntax error: expected number")
-	// }
-	if t == nil || t.Type != token.Number {
-		return 0, fmt.Errorf("Syntax error: expected number")
+	if t == nil {
+    return 0, SyntaxError{expected: "number", after: p.peekPrevToken()}
 	}
+  if t.Type != token.Number {
+    return 0, SyntaxError{expected: "number", got: t}
+  }
 	value, err := strconv.Atoi(t.Value)
 	if err != nil {
-		log.Fatal(err) // handle later
+		return 0, err
 	}
 	return value, nil
 }
 
 func (p *Parser) parseOp() (string, error) {
 	t := p.getNextToken()
-	// if t == nil {
-	// return "", fmt.Errorf("Syntax error: expected operation string")
-	// }
 	if t == nil {
-		return "", fmt.Errorf("Syntax error: expected operation string, reaced end")
+    return "", SyntaxError{expected: "operation", after: p.peekPrevToken()}
 	}
 	switch t.Type {
 	case token.Plus:
@@ -100,7 +98,7 @@ func (p *Parser) parseOp() (string, error) {
 	case token.Minus:
 		return OP_MINUS, nil
 	}
-	return "", fmt.Errorf("Syntax error: invalid operation string: %s", t.Value)
+  return "", SyntaxError{expected: "operation", got: t}
 }
 
 const OP_PLUS = "+"
@@ -135,7 +133,10 @@ func (p *Parser) Parse() error {
 
 	var lastExpr *Expr
 	for {
-		expr := p.parseExpression(lastExpr)
+		expr, err := p.parseExpression(lastExpr)
+    if err != nil {
+      return err
+    }
 		fmt.Println(expr)
 		if expr == nil {
 			break
@@ -144,7 +145,7 @@ func (p *Parser) Parse() error {
 
 		t := p.peekNextToken()
 		if t == nil {
-			return fmt.Errorf(`Syntax error: expected termination keyword "?"`)
+      return SyntaxError{expected: `termination keyword "?"`, after: p.peekPrevToken()}
 		} else if t.Type == token.QuestionMarkKeyword {
 			break
 		}

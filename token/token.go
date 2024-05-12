@@ -22,10 +22,10 @@ type Token struct {
 }
 
 func (t Token) String() string {
-	return fmt.Sprintf("{%v %s %d:%d}", t.Value, getTokenTypeString(t.Type), t.Begin, t.End)
+	return fmt.Sprintf("{%v %s %d-%d}", t.Value, GetTokenTypeString(t.Type), t.Begin, t.End)
 }
 
-func getTokenTypeString(tt TokenType) string {
+func GetTokenTypeString(tt TokenType) string {
 	switch tt {
 	case WhatIs:
 		return "WhatIs"
