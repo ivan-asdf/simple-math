@@ -1,85 +1,58 @@
 package lexer
 
 import (
-	"log"
-	"unicode"
+	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/ivan-asdf/simple-math/token"
 )
 
 type Lexer struct {
-	input  []rune
-	pos    int
-	length int
+	input         string
+	regexpPattern *regexp.Regexp
 }
 
-func newLexer(input string) *Lexer {
-	return &Lexer{input: []rune(input), length: len(input)}
-}
-
-func Lex(input string) []token.Token {
-	lexer := newLexer(input)
-  var tokens []token.Token
-	for {
-		token := lexer.NextToken()
-		if token == nil {
-			break
-		}
-    tokens = append(tokens, *token)
-		// fmt.Printf("Token: %v, Value: %s\n", token.Type, token.Value)
+func NewLexer(input string) *Lexer {
+	l := &Lexer{
+		input:  input,
 	}
-  return tokens
+	var groupNamesPatterns [token.LEN]string
+	groupNamesPatterns[token.WhatIs] = `what is`
+	groupNamesPatterns[token.QuestionMarkKeyword] = `\?`
+	groupNamesPatterns[token.Plus] = `plus`
+	groupNamesPatterns[token.Minus] = `minus`
+	groupNamesPatterns[token.Number] = `\d+`
+	groupNamesPatterns[token.Word] = `[^\s\?]+`
+
+	var patternStrings []string
+	for groupName, pattern := range groupNamesPatterns {
+		groupPattern := fmt.Sprintf(`(?P<%d>%s)`, groupName, pattern)
+		patternStrings = append(patternStrings, groupPattern)
+	}
+	fmt.Println(patternStrings)
+	l.regexpPattern = regexp.MustCompile("(?i)" + strings.Join(patternStrings, "|"))
+	fmt.Println(l.regexpPattern)
+
+	return l
 }
 
-func (l *Lexer) NextToken() *token.Token {
-	for l.pos < l.length {
-    // TODO: add error handling for example invalid UTF-8
-    r  := l.input[l.pos]
-		if unicode.IsSpace(r) {
-			l.pos++
-			continue
+func (l *Lexer) Lex() []token.Token {
+	var tokens []token.Token
+	matches := l.regexpPattern.FindAllStringSubmatchIndex(l.input, -1)
+	for _, m := range matches {
+		groupMatches := m[2:]
+		fmt.Println(groupMatches)
+		for i, groupIndex := 0, 0; i < len(groupMatches); i, groupIndex = i+2, groupIndex+1 {
+			if groupMatches[i] != -1 {
+				fmt.Println("INDEX: ", i, "GROUP:, ", groupIndex)
+				startIndex, endIndex := groupMatches[i], groupMatches[i+1]
+				value := l.input[startIndex:endIndex]
+				fmt.Println(value)
+				tokens = append(tokens, token.Token{Value: value, Type: token.TokenType(groupIndex), Begin: startIndex, End: endIndex})
+				break
+			}
 		}
-
-		if unicode.IsLetter(r) {
-			return l.scanWord()
-		}
-
-		if unicode.IsDigit(r) {
-			return l.scanNumber()
-		}
-
-		if unicode.IsSymbol(r) || unicode.IsPunct(r) {
-			l.pos++
-			return &token.Token{Type: token.SymbolToken, Value: string(r)}
-		}
-
-		log.Fatal("Lexer error: Unrecognized character")
-		l.pos++
 	}
-
-	return nil
-}
-
-func (l *Lexer) scanWord() *token.Token {
-	start := l.pos
-	for l.pos < l.length {
-		r := l.input[l.pos]
-		if !unicode.IsLetter(r) {
-			break
-		}
-		l.pos++
-	}
-	return &token.Token{Type: token.WordToken, Value: string(l.input[start:l.pos])}
-}
-
-func (l *Lexer) scanNumber() *token.Token {
-	start := l.pos
-	for l.pos < l.length {
-		r := l.input[l.pos]
-		if !unicode.IsDigit(r) {
-			break
-		}
-		l.pos++
-	}
-	return &token.Token{Type: token.NumberToken, Value: string(l.input[start:l.pos])}
+	return tokens
 }
