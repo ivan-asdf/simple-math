@@ -15,7 +15,7 @@ type Lexer struct {
 
 func NewLexer(input string) *Lexer {
 	l := &Lexer{
-		input:  input,
+		input: input,
 	}
 	var groupNamesPatterns [token.LEN]string
 	groupNamesPatterns[token.WhatIs] = `what is`
