@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/ivan-asdf/simple-math/eval"
 	"github.com/ivan-asdf/simple-math/token"
 )
 
@@ -51,13 +52,13 @@ func (p *Parser) parseInitialKeyword() error {
 	return nil
 }
 
-func (p *Parser) parseExpression(prev *Expr) (*Expr, error) {
+func (p *Parser) parseExpression(prev *eval.Expr) (*eval.Expr, error) {
 	if prev == nil {
 		number, err := p.parseNumber()
 		if err != nil {
       return nil, err
 		}
-		return &Expr{Prev: prev, Op: "", Value: number}, nil
+		return &eval.Expr{Prev: prev, Op: "", Value: number}, nil
 	}
 
 	op, err := p.parseOp()
@@ -69,7 +70,7 @@ func (p *Parser) parseExpression(prev *Expr) (*Expr, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Expr{Prev: prev, Op: op, Value: number}, nil
+	return &eval.Expr{Prev: prev, Op: op, Value: number}, nil
 }
 
 func (p *Parser) parseNumber() (int, error) {
@@ -94,36 +95,12 @@ func (p *Parser) parseOp() (string, error) {
 	}
 	switch t.Type {
 	case token.Plus:
-		return OP_PLUS, nil
+		return eval.OP_PLUS, nil
 	case token.Minus:
-		return OP_MINUS, nil
+		return eval.OP_MINUS, nil
 	}
   return "", SyntaxError{expected: "operation", got: t}
 }
-
-const OP_PLUS = "+"
-const OP_MINUS = "-"
-
-type Expr struct {
-	Prev  *Expr
-	Op    string
-	Value int
-}
-
-func (e Expr) String() string {
-	if e.Prev == nil {
-		return fmt.Sprintf("%d", e.Value)
-	}
-	return fmt.Sprintf("(%v", e.Prev) + fmt.Sprintf(" %s %d)", e.Op, e.Value)
-}
-
-func (e *Expr) Evaluate() int {
-	if e.Prev == nil {
-		return e.Value
-	}
-	return e.Prev.Evaluate() + e.Value
-}
-
 func (p *Parser) Parse() error {
 	fmt.Println()
 	err := p.parseInitialKeyword()
@@ -131,7 +108,7 @@ func (p *Parser) Parse() error {
 		return err
 	}
 
-	var lastExpr *Expr
+	var lastExpr *eval.Expr
 	for {
 		expr, err := p.parseExpression(lastExpr)
     if err != nil {

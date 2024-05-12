@@ -12,7 +12,7 @@ func main() {
   // input := "What iS plUs 4?"
   // input := "What iS "
   // input := "4?"
-  input := "What iS 4 plus 5"
+  input := "What iS 4 plus 5?"
   fmt.Println(input)
   fmt.Println()
   tokens := lexer.NewLexer(input).Lex()
