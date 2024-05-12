@@ -3,19 +3,18 @@ package lexer
 import (
 	"log"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/ivan-asdf/simple-math/token"
 )
 
 type Lexer struct {
-	input  string
+	input  []rune
 	pos    int
 	length int
 }
 
 func newLexer(input string) *Lexer {
-	return &Lexer{input: input, length: len(input)}
+	return &Lexer{input: []rune(input), length: len(input)}
 }
 
 func Lex(input string) []token.Token {
@@ -35,9 +34,9 @@ func Lex(input string) []token.Token {
 func (l *Lexer) NextToken() *token.Token {
 	for l.pos < l.length {
     // TODO: add error handling for example invalid UTF-8
-		r, width := utf8.DecodeRuneInString(l.input[l.pos:])
+    r  := l.input[l.pos]
 		if unicode.IsSpace(r) {
-			l.pos += width
+			l.pos++
 			continue
 		}
 
@@ -50,12 +49,12 @@ func (l *Lexer) NextToken() *token.Token {
 		}
 
 		if unicode.IsSymbol(r) || unicode.IsPunct(r) {
-			l.pos += width
+			l.pos++
 			return &token.Token{Type: token.SymbolToken, Value: string(r)}
 		}
 
 		log.Fatal("Lexer error: Unrecognized character")
-		l.pos += width
+		l.pos++
 	}
 
 	return nil
@@ -64,23 +63,23 @@ func (l *Lexer) NextToken() *token.Token {
 func (l *Lexer) scanWord() *token.Token {
 	start := l.pos
 	for l.pos < l.length {
-		r, width := utf8.DecodeRuneInString(l.input[l.pos:])
+		r := l.input[l.pos]
 		if !unicode.IsLetter(r) {
 			break
 		}
-		l.pos += width
+		l.pos++
 	}
-	return &token.Token{Type: token.WordToken, Value: l.input[start:l.pos]}
+	return &token.Token{Type: token.WordToken, Value: string(l.input[start:l.pos])}
 }
 
 func (l *Lexer) scanNumber() *token.Token {
 	start := l.pos
 	for l.pos < l.length {
-		r, width := utf8.DecodeRuneInString(l.input[l.pos:])
+		r := l.input[l.pos]
 		if !unicode.IsDigit(r) {
 			break
 		}
-		l.pos += width
+		l.pos++
 	}
-	return &token.Token{Type: token.NumberToken, Value: l.input[start:l.pos]}
+	return &token.Token{Type: token.NumberToken, Value: string(l.input[start:l.pos])}
 }
