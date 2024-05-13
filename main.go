@@ -1,25 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
-	"github.com/ivan-asdf/simple-math/lexer"
-	"github.com/ivan-asdf/simple-math/parser"
+	"github.com/gin-gonic/gin"
+	"github.com/ivan-asdf/simple-math/api"
 )
 
 func main() {
-	// input := "What iS plUs 4?"
-	// input := "What iS "
-	// input := "4?"
-	input := "What iS 4 divided by 0?"
-	fmt.Println(input)
-	fmt.Println()
-	tokens := lexer.NewLexer(input).Lex()
-	fmt.Println(tokens)
-	parser := parser.NewParser(tokens)
-	err := parser.Parse()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// input := "What iS 4 divided by 1?"
+
+	router := gin.Default()
+	router.POST("evaluate", api.Evaluate)
+	router.POST("validate", api.Validate)
+	// router.GET("/", func(c *gin.Context) {
+	//   c.String(http.StatusOK, "GET method\n")
+	// })
+	router.Run(":1234")
 }

@@ -107,18 +107,18 @@ func (p *Parser) parseOp() (eval.Op, error) {
 	}
 	return eval.OP_NONE, SyntaxError{expected: "operation", got: t}
 }
-func (p *Parser) Parse() error {
+func (p *Parser) Parse() (*eval.Expr, error) {
 	fmt.Println()
 	err := p.parseInitialKeyword()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var lastExpr *eval.Expr
 	for {
 		expr, err := p.parseExpression(lastExpr)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		fmt.Println(expr)
 		if expr == nil {
@@ -128,17 +128,10 @@ func (p *Parser) Parse() error {
 
 		t := p.peekNextToken()
 		if t == nil {
-			return SyntaxError{expected: `termination keyword "?"`, after: p.peekPrevToken()}
+			return nil, SyntaxError{expected: `termination keyword "?"`, after: p.peekPrevToken()}
 		} else if t.Type == token.QuestionMarkKeyword {
 			break
 		}
 	}
-	fmt.Println()
-	fmt.Println(lastExpr)
-	result, err := lastExpr.Evaluate()
-	if err != nil {
-		return err
-	}
-	fmt.Println("EVAL RESULT: ", result)
-	return nil
+	return lastExpr, nil
 }
