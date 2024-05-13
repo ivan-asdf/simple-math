@@ -9,14 +9,11 @@ import (
 )
 
 type Lexer struct {
-	input         string
 	regexpPattern *regexp.Regexp
 }
 
-func NewLexer(input string) *Lexer {
-	l := &Lexer{
-		input: input,
-	}
+func NewLexer() *Lexer {
+	l := Lexer{}
 	var groupPatterns [token.LEN]string
 	groupPatterns[token.WhatIs] = `\bwhat is\b`
 	groupPatterns[token.QuestionMarkKeyword] = `\?`
@@ -35,15 +32,16 @@ func NewLexer(input string) *Lexer {
 		patternStrings[groupIndex] = groupPattern
 	}
 	fmt.Println(patternStrings)
+
 	l.regexpPattern = regexp.MustCompile("(?i)" + strings.Join(patternStrings[:], "|"))
 	fmt.Println(l.regexpPattern)
 
-	return l
+	return &l
 }
 
-func (l *Lexer) Lex() []token.Token {
+func (l *Lexer) Lex(input string) []token.Token {
 	var tokens []token.Token
-	matches := l.regexpPattern.FindAllStringSubmatchIndex(l.input, -1)
+	matches := l.regexpPattern.FindAllStringSubmatchIndex(input, -1)
 	for _, m := range matches {
 		groupMatches := m[2:]
 		fmt.Println(groupMatches)
@@ -51,7 +49,7 @@ func (l *Lexer) Lex() []token.Token {
 			if groupMatches[i] != -1 {
 				fmt.Println("INDEX: ", i, "GROUP:, ", groupIndex)
 				startIndex, endIndex := groupMatches[i], groupMatches[i+1]
-				value := l.input[startIndex:endIndex]
+				value := input[startIndex:endIndex]
 				fmt.Println(value)
 				tokens = append(tokens, token.Token{Value: value, Type: token.TokenType(groupIndex), Begin: startIndex, End: endIndex})
 				break

@@ -2,3 +2,5 @@ add some tests
 
 fix the errors?
 add the error api
+
+create the cli

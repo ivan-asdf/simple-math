@@ -1,13 +1,26 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ivan-asdf/simple-math/lexer"
-	"github.com/ivan-asdf/simple-math/parser"
 )
+
+type Handler struct {
+	s Service
+}
+
+func NewHandler(s *Service) *Handler {
+	return &Handler{s: *s}
+}
+
+func (h *Handler) RegisterRoutes(r *gin.Engine) {
+	r.POST("evaluate", h.Evaluate)
+	r.POST("validate", h.Validate)
+	// router.GET("/", func(c *gin.Context) {
+	//   c.String(http.StatusOK, "GET method\n")
+	// })
+}
 
 type Request struct {
 	Expression string `json:"expression"`
@@ -18,32 +31,20 @@ type EvaluateResponse struct {
 	Error  string `json:"error,omitempty"`
 }
 
-func eval(input string) (int, error) {
-	// input := "What iS plUs 4?"
-	fmt.Println(input)
-	fmt.Println()
-
-	tokens := lexer.NewLexer(input).Lex()
-	fmt.Println(tokens)
-
-	parser := parser.NewParser(tokens)
-	expr, err := parser.Parse()
-	if err != nil {
-		return 0, err
-	}
-
-	return expr.Evaluate()
-}
-
-func Evaluate(c *gin.Context) {
+func (h *Handler) Evaluate(c *gin.Context) {
 	var evalRequest Request
 	if err := c.BindJSON(&evalRequest); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
-	result, err := eval(evalRequest.Expression)
+	result, err := h.s.Evaluate(evalRequest.Expression)
 
-	evalResponse := EvaluateResponse{Result: result, Error: err.Error()}
+	var errorText string
+	if err != nil {
+		errorText = err.Error()
+	}
+	evalResponse := EvaluateResponse{Result: result, Error: errorText}
+
 	c.JSON(http.StatusOK, evalResponse)
 }
 
@@ -52,26 +53,14 @@ type ValidateRespone struct {
 	Reason string `json:"reason,omitempty"`
 }
 
-func validate(input string) error {
-	// input := "What iS plUs 4?"
-	fmt.Println(input)
-	fmt.Println()
-
-	tokens := lexer.NewLexer(input).Lex()
-	fmt.Println(tokens)
-
-	parser := parser.NewParser(tokens)
-	_, err := parser.Parse()
-	return err
-}
-
-func Validate(c *gin.Context) {
+func (h *Handler) Validate(c *gin.Context) {
 	var validateRequest Request
 	if err := c.BindJSON(&validateRequest); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
-	err := validate(validateRequest.Expression)
+	err := h.s.Validate(validateRequest.Expression)
+
 	var validateResponse ValidateRespone
 	if err != nil {
 		validateResponse.Valid = false
