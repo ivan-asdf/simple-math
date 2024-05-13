@@ -1,6 +1,6 @@
 add some tests
 
-fix the errors?
-add the error api
+eval errors
+parser errors dedup
 
 create the cli

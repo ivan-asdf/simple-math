@@ -15,11 +15,9 @@ func NewHandler(s *Service) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(r *gin.Engine) {
-	r.POST("evaluate", h.Evaluate)
-	r.POST("validate", h.Validate)
-	// router.GET("/", func(c *gin.Context) {
-	//   c.String(http.StatusOK, "GET method\n")
-	// })
+	r.POST("/evaluate", h.Evaluate)
+	r.POST("/validate", h.Validate)
+	r.GET("/errors", h.Errors)
 }
 
 type Request struct {
@@ -70,4 +68,8 @@ func (h *Handler) Validate(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, validateResponse)
+}
+
+func (h *Handler) Errors(c *gin.Context) {
+	c.JSON(http.StatusOK, h.s.Errors())
 }
