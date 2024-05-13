@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ivan-asdf/simple-math/token"
+	"github.com/ivan-asdf/simple-math/internal/token"
 )
 
 type Lexer struct {

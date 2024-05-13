@@ -3,8 +3,8 @@ package api
 import (
 	"fmt"
 
-	"github.com/ivan-asdf/simple-math/lexer"
-	"github.com/ivan-asdf/simple-math/parser"
+	"github.com/ivan-asdf/simple-math/internal/lexer"
+	"github.com/ivan-asdf/simple-math/internal/parser"
 )
 
 type Service struct {

@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ivan-asdf/simple-math/api"
+	"github.com/ivan-asdf/simple-math/internal/api"
 )
 
 func main() {
@@ -12,7 +12,7 @@ func main() {
 
 	service := api.NewService()
 	handler := api.NewHandler(&service)
-	handler.RegisterRoutes(router)
+  handler.RegisterRoutes(router)
 
 	err := router.Run(":1234")
 	if err != nil {

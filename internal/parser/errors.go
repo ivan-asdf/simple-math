@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 
-	"github.com/ivan-asdf/simple-math/token"
+	"github.com/ivan-asdf/simple-math/internal/token"
 )
 
 type SyntaxError struct {

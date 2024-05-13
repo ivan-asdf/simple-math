@@ -71,5 +71,5 @@ func (h *Handler) Validate(c *gin.Context) {
 }
 
 func (h *Handler) Errors(c *gin.Context) {
-	c.JSON(http.StatusOK, h.s.Errors())
+  c.JSON(http.StatusOK, h.s.Errors())
 }

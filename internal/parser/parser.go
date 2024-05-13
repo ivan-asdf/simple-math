@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/ivan-asdf/simple-math/eval"
-	"github.com/ivan-asdf/simple-math/token"
+	"github.com/ivan-asdf/simple-math/internal/eval"
+	"github.com/ivan-asdf/simple-math/internal/token"
 )
 
 type Parser struct {
