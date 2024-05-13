@@ -7,11 +7,11 @@ import (
 type Op int
 
 const (
-	OP_PLUS Op = iota
-	OP_MINUS
-	OP_MULTI
-	OP_DIV
-	OP_NONE
+	OpPlus Op = iota
+	OpMinus
+	OpMulti
+	OpDiv
+	OpNone
 )
 
 type Expr struct {
@@ -29,18 +29,19 @@ func (e Expr) String() string {
 
 func getOpString(op Op) string {
 	switch op {
-	case OP_PLUS:
+	case OpPlus:
 		return "+"
-	case OP_MINUS:
+	case OpMinus:
 		return "-"
-	case OP_MULTI:
+	case OpMulti:
 		return "*"
-	case OP_DIV:
+	case OpDiv:
 		return "/"
-	case OP_NONE:
+	case OpNone:
 		return "NONE"
+	default:
+		return ""
 	}
-	return ""
 }
 
 func (e *Expr) Evaluate() (int, error) {
@@ -53,17 +54,19 @@ func (e *Expr) Evaluate() (int, error) {
 		return 0, err
 	}
 	switch e.Op {
-	case OP_PLUS:
+	case OpPlus:
 		return result + e.Value, nil
-	case OP_MINUS:
+	case OpMinus:
 		return result - e.Value, nil
-	case OP_MULTI:
+	case OpMulti:
 		return result * e.Value, nil
-	case OP_DIV:
+	case OpDiv:
 		if e.Value == 0 {
 			return 0, fmt.Errorf("Evaluation error: division by zero")
 		}
 		return result / e.Value, nil
+	case OpNone:
+		return 0, fmt.Errorf(`Evaluation error: "None" operation %s`, getOpString(e.Op))
 	default:
 		return 0, fmt.Errorf("Evaluation error: unknown operation %s", getOpString(e.Op))
 	}

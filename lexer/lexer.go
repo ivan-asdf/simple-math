@@ -17,25 +17,25 @@ func NewLexer(input string) *Lexer {
 	l := &Lexer{
 		input: input,
 	}
-	var groupNamesPatterns [token.LEN]string
-	groupNamesPatterns[token.WhatIs] = `\bwhat is\b`
-	groupNamesPatterns[token.QuestionMarkKeyword] = `\?`
-	groupNamesPatterns[token.Plus] = `\bplus\b`
-	groupNamesPatterns[token.Minus] = `\bminus\b`
-	groupNamesPatterns[token.MultipliedBy] = `\bmultiplied by\b`
-	groupNamesPatterns[token.DividedBy] = `\bdivided by\b`
-	groupNamesPatterns[token.Cubed] = `\bcubed\b`
-	groupNamesPatterns[token.Squared] = `\bsquared\b`
-	groupNamesPatterns[token.Number] = `\b\d+\b`
-	groupNamesPatterns[token.Word] = `[^\s\?]+`
+	var groupPatterns [token.LEN]string
+	groupPatterns[token.WhatIs] = `\bwhat is\b`
+	groupPatterns[token.QuestionMarkKeyword] = `\?`
+	groupPatterns[token.Plus] = `\bplus\b`
+	groupPatterns[token.Minus] = `\bminus\b`
+	groupPatterns[token.MultipliedBy] = `\bmultiplied by\b`
+	groupPatterns[token.DividedBy] = `\bdivided by\b`
+	groupPatterns[token.Cubed] = `\bcubed\b`
+	groupPatterns[token.Squared] = `\bsquared\b`
+	groupPatterns[token.Number] = `\b\d+\b`
+	groupPatterns[token.Word] = `[^\s\?]+`
 
-	var patternStrings []string
-	for groupName, pattern := range groupNamesPatterns {
-		groupPattern := fmt.Sprintf(`(?P<%d>%s)`, groupName, pattern)
-		patternStrings = append(patternStrings, groupPattern)
+	var patternStrings [token.LEN]string
+	for groupIndex, pattern := range groupPatterns {
+		groupPattern := fmt.Sprintf(`(?P<%d>%s)`, groupIndex, pattern)
+		patternStrings[groupIndex] = groupPattern
 	}
 	fmt.Println(patternStrings)
-	l.regexpPattern = regexp.MustCompile("(?i)" + strings.Join(patternStrings, "|"))
+	l.regexpPattern = regexp.MustCompile("(?i)" + strings.Join(patternStrings[:], "|"))
 	fmt.Println(l.regexpPattern)
 
 	return l

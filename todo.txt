@@ -1,3 +1,4 @@
 add some tests
 
-add basic api
+fix the errors?
+add the error api

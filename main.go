@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/ivan-asdf/simple-math/api"
 )
@@ -14,5 +16,8 @@ func main() {
 	// router.GET("/", func(c *gin.Context) {
 	//   c.String(http.StatusOK, "GET method\n")
 	// })
-	router.Run(":1234")
+	err := router.Run(":1234")
+	if err != nil {
+		log.Fatal(err)
+	}
 }

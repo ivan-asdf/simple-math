@@ -38,12 +38,20 @@ func GetTokenTypeString(tt TokenType) string {
 	case Plus:
 		return "Plus"
 	case Minus:
-		return "Minux"
+		return "Minus"
+	case MultipliedBy:
+		return "MultipliedBy"
+	case DividedBy:
+		return "DividedBy"
+	case Cubed:
+		return "Cubed"
+	case Squared:
+		return "Squared"
 	case Number:
 		return "Number"
 	case Word:
 		return "Word"
-
+	default:
+		return ""
 	}
-	return ""
 }

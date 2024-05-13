@@ -29,12 +29,11 @@ func (e SyntaxError) Error() string {
 			e.after.Value,
 			e.after.Begin,
 			e.after.End)
-	} else {
-		return fmt.Sprintf(
-			`Syntax error: expected %s`,
-			e.expected,
-		)
 	}
+	return fmt.Sprintf(
+		`Syntax error: expected %s`,
+		e.expected,
+	)
 }
 
 type UnsupportedOperationError struct {
@@ -44,8 +43,8 @@ type UnsupportedOperationError struct {
 func (e UnsupportedOperationError) Error() string {
 	return fmt.Sprintf(
 		`Unsupported error: Unsupported operation "%s" at %d-%d`,
-    e.op.Value,
+		e.op.Value,
 		e.op.Begin,
 		e.op.End,
-  )
+	)
 }

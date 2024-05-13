@@ -57,7 +57,7 @@ func (p *Parser) parseExpression(prev *eval.Expr) (*eval.Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		return &eval.Expr{Prev: prev, Op: eval.OP_NONE, Value: number}, nil
+		return &eval.Expr{Prev: prev, Op: eval.OpNone, Value: number}, nil
 	}
 
 	op, err := p.parseOp()
@@ -89,24 +89,26 @@ func (p *Parser) parseNumber() (int, error) {
 func (p *Parser) parseOp() (eval.Op, error) {
 	t := p.getNextToken()
 	if t == nil {
-		return eval.OP_NONE, SyntaxError{expected: "operation", after: p.peekPrevToken()}
+		return eval.OpNone, SyntaxError{expected: "operation", after: p.peekPrevToken()}
 	}
 	switch t.Type {
 	case token.Plus:
-		return eval.OP_PLUS, nil
+		return eval.OpPlus, nil
 	case token.Minus:
-		return eval.OP_MINUS, nil
+		return eval.OpMinus, nil
 	case token.MultipliedBy:
-		return eval.OP_MULTI, nil
+		return eval.OpMulti, nil
 	case token.DividedBy:
-		return eval.OP_DIV, nil
+		return eval.OpDiv, nil
 	case token.Cubed:
 		fallthrough
 	case token.Squared:
-		return eval.OP_NONE, UnsupportedOperationError{op: t}
+		return eval.OpNone, UnsupportedOperationError{op: t}
+	default:
+		return eval.OpNone, SyntaxError{expected: "operation", got: t}
 	}
-	return eval.OP_NONE, SyntaxError{expected: "operation", got: t}
 }
+
 func (p *Parser) Parse() (*eval.Expr, error) {
 	fmt.Println()
 	err := p.parseInitialKeyword()
