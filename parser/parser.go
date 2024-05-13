@@ -42,6 +42,16 @@ func (p *Parser) peekPrevToken() *token.Token {
 	return &p.tokens[p.currentTokenIndex-1]
 }
 
+func (p *Parser) checkIfMathQuestion() error {
+	for t := p.getNextToken(); t != nil; t = p.getNextToken() {
+		if t.Type == token.Number {
+			p.currentTokenIndex = 0
+			return nil
+		}
+	}
+	return NonMathQuestionError{}
+}
+
 func (p *Parser) parseInitialKeyword() error {
 	t := p.getNextToken()
 	if t.Type != token.WhatIs {
@@ -110,8 +120,12 @@ func (p *Parser) parseOp() (eval.Op, error) {
 }
 
 func (p *Parser) Parse() (*eval.Expr, error) {
+	err := p.checkIfMathQuestion()
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println()
-	err := p.parseInitialKeyword()
+	err = p.parseInitialKeyword()
 	if err != nil {
 		return nil, err
 	}

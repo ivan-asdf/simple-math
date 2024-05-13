@@ -48,3 +48,9 @@ func (e UnsupportedOperationError) Error() string {
 		e.op.End,
 	)
 }
+
+type NonMathQuestionError struct{}
+
+func (e NonMathQuestionError) Error() string {
+	return "Non-math question(no numbers found in question)"
+}
