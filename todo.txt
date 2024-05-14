@@ -1,5 +1,3 @@
 add some tests
 
-maybe and .env for port
-
 run api in docker

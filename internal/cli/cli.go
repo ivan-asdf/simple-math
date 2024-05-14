@@ -28,7 +28,7 @@ func NewCliClient(host string, port string, endpoint string) *Client {
 }
 
 func (c *Client) requestURL() string {
-	return "http://" + c.host + ":" + c.port + c.endpoint
+	return "http://" + c.host + c.port + c.endpoint
 }
 
 func (c *Client) printCliPrompt() {
