@@ -51,11 +51,9 @@ func (s *Service) Evaluate(input string) (int, error) {
 	parser := parser.NewParser(tokens)
 	expr, err := parser.Parse()
 	if err != nil {
-		s.SaveError("/evaluate", input, err)
+		s.SaveError(EvaluateEndpoint, input, err)
 		return 0, err
 	}
-	fmt.Println("HERE ", expr)
-	fmt.Println("ERRORS: ", s.errorsLog)
 	return expr.Evaluate()
 }
 
@@ -68,6 +66,10 @@ func (s *Service) Validate(input string) error {
 
 	parser := parser.NewParser(tokens)
 	_, err := parser.Parse()
+	if err != nil {
+		s.SaveError(ValidateEndpoint, input, err)
+		return err
+	}
 	return err
 }
 

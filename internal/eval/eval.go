@@ -14,6 +14,7 @@ const (
 	OpNone
 )
 
+// Add validation on create
 type Expr struct {
 	Prev  *Expr
 	Op    Op

@@ -2,7 +2,10 @@ module github.com/ivan-asdf/simple-math
 
 go 1.22.1
 
-require github.com/gin-gonic/gin v1.10.0
+require (
+	github.com/gin-gonic/gin v1.10.0
+	github.com/go-resty/resty/v2 v2.13.1
+)
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect

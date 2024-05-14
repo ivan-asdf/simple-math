@@ -4,3 +4,11 @@ eval errors
 parser errors dedup
 
 create the cli
+
+eval validate(Maybe move 0 Op to None)
+token (maybe make -1 defualt and none)
+rwMutex for errorsLog in service
+
+maybe and .env for port
+
+run api in docker

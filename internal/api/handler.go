@@ -14,10 +14,18 @@ func NewHandler(s *Service) *Handler {
 	return &Handler{s: *s}
 }
 
+// type Endpoint string
+
+const (
+	EvaluateEndpoint = "/evaluate"
+	ValidateEndpoint = "/validate"
+	ErorrsEndpoint   = "/errors"
+)
+
 func (h *Handler) RegisterRoutes(r *gin.Engine) {
-	r.POST("/evaluate", h.Evaluate)
-	r.POST("/validate", h.Validate)
-	r.GET("/errors", h.Errors)
+	r.POST(EvaluateEndpoint, h.Evaluate)
+	r.POST(ValidateEndpoint, h.Validate)
+	r.GET(ErorrsEndpoint, h.Errors)
 }
 
 type Request struct {
@@ -25,7 +33,7 @@ type Request struct {
 }
 
 type EvaluateResponse struct {
-	Result int    `json:"result"`
+	Result int    `json:"result,omitempty"`
 	Error  string `json:"error,omitempty"`
 }
 
@@ -71,5 +79,5 @@ func (h *Handler) Validate(c *gin.Context) {
 }
 
 func (h *Handler) Errors(c *gin.Context) {
-  c.JSON(http.StatusOK, h.s.Errors())
+	c.JSON(http.StatusOK, h.s.Errors())
 }

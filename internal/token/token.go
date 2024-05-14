@@ -18,6 +18,7 @@ const (
 	LEN
 )
 
+// Add validation on create
 type Token struct {
 	Value string
 	Type  TokenType

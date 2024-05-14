@@ -12,7 +12,7 @@ func main() {
 
 	service := api.NewService()
 	handler := api.NewHandler(&service)
-  handler.RegisterRoutes(router)
+	handler.RegisterRoutes(router)
 
 	err := router.Run(":1234")
 	if err != nil {
