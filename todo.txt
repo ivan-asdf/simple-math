@@ -3,7 +3,6 @@ add some tests
 eval errors
 parser errors dedup
 
-eval validate(Maybe move 0 Op to None)
 token (maybe make -1 defualt and none)
 
 maybe and .env for port

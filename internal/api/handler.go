@@ -1,20 +1,20 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ivan-asdf/simple-math/internal/eval"
 )
 
 type Handler struct {
-	s Service
+	s *Service
 }
 
 func NewHandler(s *Service) *Handler {
-	return &Handler{s: *s}
+	return &Handler{s: s}
 }
-
-// type Endpoint string
 
 const (
 	EvaluateEndpoint = "/evaluate"
@@ -45,13 +45,30 @@ func (h *Handler) Evaluate(c *gin.Context) {
 
 	result, err := h.s.Evaluate(evalRequest.Expression)
 
-	var errorText string
+	var evalResponse EvaluateResponse
+	httpCode := http.StatusOK
 	if err != nil {
-		errorText = err.Error()
-	}
-	evalResponse := EvaluateResponse{Result: result, Error: errorText}
+		httpCode = http.StatusInternalServerError
+		evalResponse.Error = "interal server error"
 
-	c.JSON(http.StatusOK, evalResponse)
+		switch {
+		case errors.Is(err, eval.ErrEvalDivisionByZero):
+			httpCode = http.StatusOK
+			evalResponse.Error = err.Error()
+		case errors.Is(err, eval.ErrEvalInvalidExpr):
+		case errors.Is(err, eval.ErrEvalNoneOperation):
+		case errors.Is(err, eval.ErrEvalUnknownOperation):
+		default:
+			httpCode = http.StatusOK
+			evalResponse.Error = err.Error()
+		}
+
+		c.JSON(httpCode, evalResponse)
+		return
+	}
+
+	evalResponse.Result = result
+	c.JSON(httpCode, evalResponse)
 }
 
 type ValidateRespone struct {

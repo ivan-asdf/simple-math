@@ -67,7 +67,7 @@ func (p *Parser) parseExpression(prev *eval.Expr) (*eval.Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		return &eval.Expr{Prev: prev, Op: eval.OpNone, Value: number}, nil
+		return eval.NewExpr(prev, eval.OpNone, number)
 	}
 
 	op, err := p.parseOp()
@@ -78,7 +78,7 @@ func (p *Parser) parseExpression(prev *eval.Expr) (*eval.Expr, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &eval.Expr{Prev: prev, Op: op, Value: number}, nil
+	return eval.NewExpr(prev, op, number)
 }
 
 func (p *Parser) parseNumber() (int, error) {
