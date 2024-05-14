@@ -2,14 +2,16 @@ package api
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/ivan-asdf/simple-math/internal/lexer"
 	"github.com/ivan-asdf/simple-math/internal/parser"
 )
 
 type Service struct {
-	lexer     lexer.Lexer
-	errorsLog map[ErrorLogKey]int
+	lexer            lexer.Lexer
+	errorsLog        map[ErrorLogKey]int
+	errorsLogRWMutex sync.RWMutex
 }
 
 type ErrorLogKey struct {
@@ -20,8 +22,9 @@ type ErrorLogKey struct {
 
 func NewService() Service {
 	return Service{
-		lexer:     *lexer.NewLexer(),
-		errorsLog: make(map[ErrorLogKey]int),
+		lexer:            *lexer.NewLexer(),
+		errorsLog:        make(map[ErrorLogKey]int),
+		errorsLogRWMutex: sync.RWMutex{},
 	}
 }
 
@@ -38,7 +41,9 @@ func (s *Service) SaveError(endpoint string, expression string, err error) {
 		return
 	}
 
+	s.errorsLogRWMutex.Lock()
 	s.errorsLog[ErrorLogKey{endpoint, expression, errType}]++
+	s.errorsLogRWMutex.Unlock()
 }
 
 func (s *Service) Evaluate(input string) (int, error) {
@@ -75,6 +80,7 @@ func (s *Service) Validate(input string) error {
 
 func (s *Service) Errors() []map[string]string {
 	var errorFrequencies []map[string]string
+	s.errorsLogRWMutex.RLock()
 	for entry, frequency := range s.errorsLog {
 		errorFrequencies = append(errorFrequencies, map[string]string{
 			"expression": entry.expression,
@@ -83,5 +89,6 @@ func (s *Service) Errors() []map[string]string {
 			"type":       entry.errorType,
 		})
 	}
+	s.errorsLogRWMutex.RUnlock()
 	return errorFrequencies
 }
