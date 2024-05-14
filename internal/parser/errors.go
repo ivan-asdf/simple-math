@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ivan-asdf/simple-math/internal/token"
@@ -12,28 +13,18 @@ type SyntaxError struct {
 	after    *token.Token
 }
 
+func positionString(t *token.Token) string {
+	return fmt.Sprintf(`"%s" at %d-%d`, t.Value, t.Begin, t.End)
+}
+
 func (e SyntaxError) Error() string {
 	if e.got != nil {
-		return fmt.Sprintf(
-			`Syntax error: expected %s, got "%s" at %d-%d`,
-			e.expected,
-			// token.GetTokenTypeString(e.got.Type),
-			e.got.Value,
-			e.got.Begin,
-			e.got.End)
-	} else if e.after != nil {
-		return fmt.Sprintf(
-			`Syntax error: expected %s after "%s" at %d-%d`,
-			e.expected,
-			// token.GetTokenTypeString(e.got.Type),
-			e.after.Value,
-			e.after.Begin,
-			e.after.End)
+		return fmt.Sprintf(`Syntax error: expected %s, got %s`, e.expected, positionString(e.got))
 	}
-	return fmt.Sprintf(
-		`Syntax error: expected %s`,
-		e.expected,
-	)
+	if e.after != nil {
+		return fmt.Sprintf(`Syntax error: expected %s, after %s`, e.expected, positionString(e.after))
+	}
+	return fmt.Sprintf(`Syntax error: expected %s`, e.expected)
 }
 
 type UnsupportedOperationError struct {
@@ -41,16 +32,7 @@ type UnsupportedOperationError struct {
 }
 
 func (e UnsupportedOperationError) Error() string {
-	return fmt.Sprintf(
-		`Unsupported error: Unsupported operation "%s" at %d-%d`,
-		e.op.Value,
-		e.op.Begin,
-		e.op.End,
-	)
+	return fmt.Sprintf(`Unsupported error: Unsupported operation %s`, positionString(e.op))
 }
 
-type NonMathQuestionError struct{}
-
-func (e NonMathQuestionError) Error() string {
-	return "Non-math question(no numbers found in question)"
-}
+var NonMathQuestionError = errors.New("non-math question(no numbers found in question)")

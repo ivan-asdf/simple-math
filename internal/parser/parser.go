@@ -49,7 +49,7 @@ func (p *Parser) checkIfMathQuestion() error {
 			return nil
 		}
 	}
-	return NonMathQuestionError{}
+	return NonMathQuestionError
 }
 
 func (p *Parser) parseInitialKeyword() error {

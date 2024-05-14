@@ -1,10 +1,5 @@
 add some tests
 
-eval errors
-parser errors dedup
-
-token (maybe make -1 defualt and none)
-
 maybe and .env for port
 
 run api in docker

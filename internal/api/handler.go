@@ -16,6 +16,8 @@ func NewHandler(s *Service) *Handler {
 	return &Handler{s: s}
 }
 
+const InternalServerError = "internal server error"
+
 const (
 	EvaluateEndpoint = "/evaluate"
 	ValidateEndpoint = "/validate"
@@ -49,7 +51,7 @@ func (h *Handler) Evaluate(c *gin.Context) {
 	httpCode := http.StatusOK
 	if err != nil {
 		httpCode = http.StatusInternalServerError
-		evalResponse.Error = "interal server error"
+		evalResponse.Error = InternalServerError
 
 		switch {
 		case errors.Is(err, eval.ErrEvalDivisionByZero):

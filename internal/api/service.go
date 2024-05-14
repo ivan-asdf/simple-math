@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -30,12 +31,12 @@ func NewService() Service {
 
 func (s *Service) SaveError(endpoint string, expression string, err error) {
 	var errType string
-	switch err.(type) {
-	case parser.SyntaxError:
+	switch {
+	case errors.As(err, &parser.SyntaxError{}):
 		errType = "Syntax error"
-	case parser.UnsupportedOperationError:
+	case errors.As(err, &parser.UnsupportedOperationError{}):
 		errType = "Unsupported operation error"
-	case parser.NonMathQuestionError:
+	case errors.Is(err, parser.NonMathQuestionError):
 		errType = "Non-math question error"
 	default:
 		return
