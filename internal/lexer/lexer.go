@@ -31,10 +31,8 @@ func NewLexer() *Lexer {
 		groupPattern := fmt.Sprintf(`(?P<%d>%s)`, groupIndex, pattern)
 		patternStrings[groupIndex] = groupPattern
 	}
-	fmt.Println(patternStrings)
 
 	l.regexpPattern = regexp.MustCompile("(?i)" + strings.Join(patternStrings[:], "|"))
-	fmt.Println(l.regexpPattern)
 
 	return &l
 }
@@ -44,13 +42,10 @@ func (l *Lexer) Lex(input string) []token.Token {
 	matches := l.regexpPattern.FindAllStringSubmatchIndex(input, -1)
 	for _, m := range matches {
 		groupMatches := m[2:]
-		fmt.Println(groupMatches)
 		for i, groupIndex := 0, 0; i < len(groupMatches); i, groupIndex = i+2, groupIndex+1 {
 			if groupMatches[i] != -1 {
-				fmt.Println("INDEX: ", i, "GROUP:, ", groupIndex)
 				startIndex, endIndex := groupMatches[i], groupMatches[i+1]
 				value := input[startIndex:endIndex]
-				fmt.Println(value)
 				tokens = append(tokens, token.Token{Value: value, Type: token.TokenType(groupIndex), Begin: startIndex, End: endIndex})
 				break
 			}

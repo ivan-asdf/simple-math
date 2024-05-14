@@ -10,7 +10,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const ApiPortEnvVar = "API_PORT"
+const APIPortEnvVar = "API_PORT"
 
 func main() {
 	err := godotenv.Load()
@@ -24,7 +24,7 @@ func main() {
 	handler.RegisterRoutes(router)
 
 	port := common.DefaultPort
-	value, ok := os.LookupEnv(ApiPortEnvVar)
+	value, ok := os.LookupEnv(APIPortEnvVar)
 	if ok {
 		port = ":" + value
 	}
