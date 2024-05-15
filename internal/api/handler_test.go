@@ -7,6 +7,8 @@ import (
 )
 
 func TestHandlerValidate(t *testing.T) {
+	t.Parallel()
+
 	s := NewService()
 	h := NewHandler(&s)
 
@@ -24,6 +26,8 @@ func TestHandlerValidate(t *testing.T) {
 }
 
 func TestHandlerEvaluate(t *testing.T) {
+	t.Parallel()
+
 	s := NewService()
 	h := NewHandler(&s)
 

@@ -27,6 +27,8 @@ func parse(input string) (*eval.Expr, error) {
 }
 
 func TestParseInitialKeyword(t *testing.T) {
+	t.Parallel()
+
 	p := NewParser(genTokens("What is"))
 	err := p.parseInitialKeyword()
 	assert.Nil(t, err)
@@ -39,12 +41,16 @@ func TestParseInitialKeyword(t *testing.T) {
 }
 
 func TestParseInitialKeywordFail(t *testing.T) {
+	t.Parallel()
+
 	p := NewParser(genTokens("dasd"))
 	err := p.parseInitialKeyword()
 	assert.EqualErrorf(t, err, "Syntax error: expected \"What is\" keyword", "Errors should match")
 }
 
 func TestParseNumber(t *testing.T) {
+	t.Parallel()
+
 	p := NewParser(genTokens("5"))
 	number, err := p.parseNumber()
 	assert.Nil(t, err)
@@ -63,6 +69,8 @@ func TestParseNumber(t *testing.T) {
 }
 
 func TestParseNumberFail(t *testing.T) {
+	t.Parallel()
+
 	p := NewParser(genTokens("word"))
 	number, err := p.parseNumber()
 	assert.EqualErrorf(t, err, "Syntax error: expected number, got \"word\" at 0-4", "Errors should match")
@@ -70,6 +78,8 @@ func TestParseNumberFail(t *testing.T) {
 }
 
 func TestParseOp(t *testing.T) {
+	t.Parallel()
+
 	p := NewParser(genTokens("plus"))
 	op, err := p.parseOp()
 	assert.Nil(t, err)
@@ -106,6 +116,8 @@ func TestParseOp(t *testing.T) {
 }
 
 func TestParseOpFail(t *testing.T) {
+	t.Parallel()
+
 	p := NewParser(genTokens("asd"))
 	op, err := p.parseOp()
 	assert.EqualErrorf(t, err, "Syntax error: expected operation, got \"asd\" at 0-3", "Errors should match")
@@ -113,6 +125,8 @@ func TestParseOpFail(t *testing.T) {
 }
 
 func TestParseExpression(t *testing.T) {
+	t.Parallel()
+
 	p := NewParser(genTokens("4 plus 3"))
 
 	expr1, err := p.parseExpression(nil)
@@ -129,6 +143,8 @@ func TestParseExpression(t *testing.T) {
 }
 
 func TestParseExpressionFail(t *testing.T) {
+	t.Parallel()
+
 	p := NewParser(genTokens("dasda"))
 
 	expr, err := p.parseExpression(nil)
@@ -137,6 +153,8 @@ func TestParseExpressionFail(t *testing.T) {
 }
 
 func TestSimpleExpression(t *testing.T) {
+	t.Parallel()
+
 	input := "What is 5?"
 	p := NewParser(genTokens(input))
 	result, err := p.Parse()
@@ -145,6 +163,8 @@ func TestSimpleExpression(t *testing.T) {
 }
 
 func TestSimpleExpression2(t *testing.T) {
+	t.Parallel()
+
 	input := "What is 5 plus 5 multiplied by 5?"
 	p := NewParser(genTokens(input))
 	result, err := p.Parse()
@@ -153,6 +173,8 @@ func TestSimpleExpression2(t *testing.T) {
 }
 
 func TestSyntaxErrorFail(t *testing.T) {
+	t.Parallel()
+
 	input := "What is 5"
 	expr, err := parse(input)
 	assert.EqualErrorf(t, err, "Syntax error: expected termination keyword \"?\", after \"5\" at 8-9", "Errors should match")
@@ -180,6 +202,8 @@ func TestSyntaxErrorFail(t *testing.T) {
 }
 
 func TestUnsupportedOperationErrorFail(t *testing.T) {
+	t.Parallel()
+
 	input := "What is 5 cubed"
 	expr, err := parse(input)
 	assert.EqualErrorf(t, err, "Unsupported error: Unsupported operation \"cubed\" at 10-15", "Errors should match")
@@ -192,6 +216,8 @@ func TestUnsupportedOperationErrorFail(t *testing.T) {
 }
 
 func TestNonMathQuestionErrorFails(t *testing.T) {
+	t.Parallel()
+
 	input := "What is the President of the United States?"
 	expr, err := parse(input)
 	assert.EqualErrorf(t, err, "non-math question(no numbers found in question)", "Errors should match")

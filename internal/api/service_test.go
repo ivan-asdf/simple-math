@@ -7,6 +7,8 @@ import (
 )
 
 func TestServiceEvaluate(t *testing.T) {
+	t.Parallel()
+
 	s := NewService()
 	result, err := s.Evaluate("What is 7?")
 	assert.Nil(t, err)
@@ -18,6 +20,8 @@ func TestServiceEvaluate(t *testing.T) {
 }
 
 func TestServiceEvaluateFail(t *testing.T) {
+	t.Parallel()
+
 	s := NewService()
 	endpoint := "/evaluate"
 
@@ -75,6 +79,8 @@ func TestServiceEvaluateFail(t *testing.T) {
 }
 
 func TestServiceValidate(t *testing.T) {
+	t.Parallel()
+
 	s := NewService()
 	_, err := s.Evaluate("What is 7?")
 	assert.Nil(t, err)
@@ -84,6 +90,8 @@ func TestServiceValidate(t *testing.T) {
 }
 
 func TestServiceValidateFail(t *testing.T) {
+	t.Parallel()
+
 	s := NewService()
 	endpoint := "/validate"
 

@@ -7,6 +7,8 @@ import (
 )
 
 func TestValidatePass(t *testing.T) {
+	t.Parallel()
+
 	// Single value with no operator
 	expr1 := &Expr{prev: nil, op: OpNone, value: 5}
 	err := validate(expr1)
@@ -19,6 +21,8 @@ func TestValidatePass(t *testing.T) {
 }
 
 func TestValidateFail(t *testing.T) {
+	t.Parallel()
+
 	// Invalid operator
 	expr1 := &Expr{prev: nil, op: 32312, value: 5}
 	err := validate(expr1)
@@ -47,6 +51,8 @@ func TestValidateFail(t *testing.T) {
 }
 
 func TestSimpleEvaluation(t *testing.T) {
+	t.Parallel()
+
 	expr1 := &Expr{prev: nil, op: OpNone, value: 4}
 	expr2 := &Expr{prev: expr1, op: OpPlus, value: 3}
 	result, err := expr2.Evaluate()
@@ -55,6 +61,8 @@ func TestSimpleEvaluation(t *testing.T) {
 }
 
 func TestSimpleEvaluation2(t *testing.T) {
+	t.Parallel()
+
 	expr1 := &Expr{prev: nil, op: OpNone, value: 3}
 	expr2 := &Expr{prev: expr1, op: OpPlus, value: 2}
 	expr3 := &Expr{prev: expr2, op: OpMulti, value: 3}
@@ -64,6 +72,8 @@ func TestSimpleEvaluation2(t *testing.T) {
 }
 
 func TestExprString(t *testing.T) {
+	t.Parallel()
+
 	expr1 := &Expr{prev: nil, op: OpNone, value: 3}
 	expr2 := &Expr{prev: expr1, op: OpPlus, value: 2}
 	expr3 := &Expr{prev: expr2, op: OpMulti, value: 3}
@@ -97,6 +107,8 @@ func TestVeryNestedMultiplication(t *testing.T) {
 }
 
 func TestDivisionByZeroFail(t *testing.T) {
+	t.Parallel()
+
 	expr1 := &Expr{prev: nil, op: OpNone, value: 4}
 	expr2 := &Expr{prev: expr1, op: OpDiv, value: 0}
 	result, err := expr2.Evaluate()

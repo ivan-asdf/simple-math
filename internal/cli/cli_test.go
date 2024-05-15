@@ -11,6 +11,8 @@ import (
 )
 
 func TestMakeErrorsGetRequest(t *testing.T) {
+	t.Parallel()
+
 	endpoint := api.ErorrsEndpoint
 
 	response := `{"endpoint": "/validate","expression": "is 7","type": "Syntax error","frequency": "2"}`
@@ -34,6 +36,8 @@ func TestMakeErrorsGetRequest(t *testing.T) {
 }
 
 func TestEvaluateMakePostRequest(t *testing.T) {
+	t.Parallel()
+
 	endpoint := api.EvaluateEndpoint
 
 	response := `{"result": 5}`
@@ -54,6 +58,8 @@ func TestEvaluateMakePostRequest(t *testing.T) {
 }
 
 func TestValidateMakePostRequest(t *testing.T) {
+	t.Parallel()
+
 	endpoint := api.ValidateEndpoint
 
 	response := `{"valid": true}`
@@ -74,6 +80,8 @@ func TestValidateMakePostRequest(t *testing.T) {
 }
 
 func TestRequestFailure(t *testing.T) {
+	t.Parallel()
+
 	cli := NewCliClient("invalid", api.ErorrsEndpoint)
 
 	result := cli.makeErrorsGetRequest()
