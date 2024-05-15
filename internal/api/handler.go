@@ -39,6 +39,11 @@ type EvaluateResponse struct {
 	Error  string `json:"error,omitempty"`
 }
 
+type ValidateResponse struct {
+	Valid  bool   `json:"valid"`
+	Reason string `json:"reason,omitempty"`
+}
+
 func (h *Handler) Evaluate(c *gin.Context) {
 	var evalRequest Request
 	if err := c.BindJSON(&evalRequest); err != nil {
@@ -70,11 +75,6 @@ func (h *Handler) evaluate(evalRequest Request) (EvaluateResponse, int) {
 
 	evalResponse.Result = result
 	return evalResponse, httpCode
-}
-
-type ValidateResponse struct {
-	Valid  bool   `json:"valid"`
-	Reason string `json:"reason,omitempty"`
 }
 
 func (h *Handler) Validate(c *gin.Context) {

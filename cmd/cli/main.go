@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ivan-asdf/simple-math/cmd/common"
 	"github.com/ivan-asdf/simple-math/internal/api"
 	"github.com/ivan-asdf/simple-math/internal/cli"
 )
@@ -16,7 +15,7 @@ Usage: ./cli [options]
 Options:
   -mode/-m string
     Mode of operation: eval, validate, or error (default "eval")
-  -port/-p :{port} (default ":55555")
+  -port/-p :{port} (default "55555")
 `
 
 func main() {
@@ -29,8 +28,8 @@ func main() {
 	flag.StringVar(&mode, "m", "eval", "")
 
 	var port string
-	flag.StringVar(&port, "port", common.DefaultPort, "To which port to connect")
-	flag.StringVar(&port, "p", common.DefaultPort, "")
+	flag.StringVar(&port, "port", "55555", "To which port to connect")
+	flag.StringVar(&port, "p", "55555", "")
 
 	flag.Parse()
 
@@ -51,6 +50,6 @@ func main() {
 		fmt.Printf("Invalid mode: %s\n", mode)
 		os.Exit(1)
 	}
-	cc := cli.NewCliClient("http://localhost"+port, endpoint)
+	cc := cli.NewClient("http://localhost:"+port, endpoint)
 	cc.Run()
 }

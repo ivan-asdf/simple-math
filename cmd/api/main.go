@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
+	"net"
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ivan-asdf/simple-math/cmd/common"
 	"github.com/ivan-asdf/simple-math/internal/api"
 	"github.com/joho/godotenv"
 )
@@ -23,12 +23,12 @@ func main() {
 	handler := api.NewHandler(&service)
 	handler.RegisterRoutes(router)
 
-	port := common.DefaultPort
+	port := "55555"
 	value, ok := os.LookupEnv(APIPortEnvVar)
 	if ok {
-		port = ":" + value
+		port = value
 	}
-	err = router.Run(port)
+	err = router.Run(net.JoinHostPort("", port))
 	if err != nil {
 		log.Fatal(err)
 	}

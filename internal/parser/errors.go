@@ -7,6 +7,8 @@ import (
 	"github.com/ivan-asdf/simple-math/internal/token"
 )
 
+var NonMathQuestionError = errors.New("non-math question(no numbers found in question)")
+
 type SyntaxError struct {
 	expected string
 	got      *token.Token
@@ -34,5 +36,3 @@ type UnsupportedOperationError struct {
 func (e UnsupportedOperationError) Error() string {
 	return fmt.Sprintf(`Unsupported error: Unsupported operation %s`, positionString(e.op))
 }
-
-var NonMathQuestionError = errors.New("non-math question(no numbers found in question)")

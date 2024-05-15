@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/ivan-asdf/simple-math/internal/eval"
@@ -90,7 +91,7 @@ func (p *Parser) parseNumber() (int, error) {
 	}
 	value, err := strconv.Atoi(t.Value)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to convert string to num: %w", err)
 	}
 	return value, nil
 }

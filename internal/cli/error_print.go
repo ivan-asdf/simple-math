@@ -6,11 +6,10 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-func detailedErrorInformation(err error, resp *resty.Response) string {
+func detailedErrorInformation(resp *resty.Response) string {
 	var info string
 	// Explore response object
 	info += "Response Info:\n"
-	info += fmt.Sprintf("  Error      : %v\n", err)
 	info += fmt.Sprintf("  Status Code: %v\n", resp.StatusCode())
 	info += fmt.Sprintf("  Status     : %v\n", resp.Status())
 	info += fmt.Sprintf("  Proto      : %v\n", resp.Proto())

@@ -74,7 +74,7 @@ func (s *Service) Validate(input string) error {
 		s.SaveError(ValidateEndpoint, input, err)
 		return err
 	}
-	return err
+	return nil
 }
 
 func (s *Service) Errors() []map[string]string {

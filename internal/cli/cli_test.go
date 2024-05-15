@@ -23,9 +23,10 @@ func TestMakeErrorsGetRequest(t *testing.T) {
 	}))
 	defer testServer.Close()
 
-	cli := NewCliClient(testServer.URL, endpoint)
-	result := cli.makeErrorsGetRequest()
+	cli := NewClient(testServer.URL, endpoint)
+	result, err := cli.makeErrorsGetRequest()
 
+	assert.Nil(t, err)
 	expected := `{
   "endpoint": "/validate",
   "expression": "is 7",
@@ -48,9 +49,10 @@ func TestEvaluateMakePostRequest(t *testing.T) {
 	}))
 	defer testServer.Close()
 
-	cli := NewCliClient(testServer.URL, endpoint)
-	result := cli.makePostRequest("What is 5?")
+	cli := NewClient(testServer.URL, endpoint)
+	result, err := cli.makePostRequest("What is 5?")
 
+	assert.Nil(t, err)
 	expected := `{
   "result": 5
 }`
@@ -70,9 +72,10 @@ func TestValidateMakePostRequest(t *testing.T) {
 	}))
 	defer testServer.Close()
 
-	cli := NewCliClient(testServer.URL, endpoint)
-	result := cli.makePostRequest("What is 5?")
+	cli := NewClient(testServer.URL, endpoint)
+	result, err := cli.makePostRequest("What is 5?")
 
+	assert.Nil(t, err)
 	expected := `{
   "valid": true
 }`
@@ -82,10 +85,10 @@ func TestValidateMakePostRequest(t *testing.T) {
 func TestRequestFailure(t *testing.T) {
 	t.Parallel()
 
-	cli := NewCliClient("invalid", api.ErorrsEndpoint)
+	cli := NewClient("invalid", api.ErorrsEndpoint)
 
-	result := cli.makeErrorsGetRequest()
-	assert.Contains(t, result, "Error      :")
+	result, err := cli.makeErrorsGetRequest()
+	assert.NotNil(t, err)
 	assert.Contains(t, result, "Status Code:")
 	assert.Contains(t, result, "RequestAttempt:")
 }

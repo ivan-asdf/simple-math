@@ -17,7 +17,7 @@ type Client struct {
 	endpoint string
 }
 
-func NewCliClient(url string, endpoint string) *Client {
+func NewClient(url string, endpoint string) *Client {
 	return &Client{
 		client:   resty.New(),
 		url:      url,
@@ -48,7 +48,7 @@ func formatResponse(body []byte) string {
 	return prettyJSON.String()
 }
 
-func (c *Client) makePostRequest(input string) string {
+func (c *Client) makePostRequest(input string) (string, error) {
 	request := api.Request{Expression: input}
 
 	resp, err := c.client.R().
@@ -56,25 +56,28 @@ func (c *Client) makePostRequest(input string) string {
 		SetBody(request).
 		Post(c.requestURL())
 	if err != nil {
-		return detailedErrorInformation(err, resp)
+		return detailedErrorInformation(resp), err
 	}
 
-	return formatResponse(resp.Body())
+	return formatResponse(resp.Body()), nil
 }
 
-func (c *Client) makeErrorsGetRequest() string {
+func (c *Client) makeErrorsGetRequest() (string, error) {
 	resp, err := c.client.R().
 		Get(c.requestURL())
 	if err != nil {
-		return detailedErrorInformation(err, resp)
+		return detailedErrorInformation(resp), err
 	}
 
-	return formatResponse(resp.Body())
+	return formatResponse(resp.Body()), nil
 }
 
 func (c *Client) Run() {
 	if c.endpoint == api.ErorrsEndpoint {
-		result := c.makeErrorsGetRequest()
+		result, err := c.makeErrorsGetRequest()
+		if err != nil {
+			fmt.Printf("Error: %s\n", err)
+		}
 		fmt.Println(result)
 		return
 	}
@@ -83,7 +86,11 @@ func (c *Client) Run() {
 	fmt.Printf("Enter text (Ctrl+D to end):\n\n")
 	c.printCliPrompt()
 	for scanner.Scan() {
-		result := c.makePostRequest(scanner.Text())
+		input := scanner.Text()
+		result, err := c.makePostRequest(input)
+		if err != nil {
+			fmt.Printf("Error: %s\n", err)
+		}
 		fmt.Print(result, "\n\n")
 		c.printCliPrompt()
 	}
