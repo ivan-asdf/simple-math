@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEvaluate(t *testing.T) {
+func TestServiceEvaluate(t *testing.T) {
 	s := NewService()
 	result, err := s.Evaluate("What is 7?")
 	assert.Nil(t, err)
@@ -17,7 +17,7 @@ func TestEvaluate(t *testing.T) {
 	assert.Equal(t, 21, result)
 }
 
-func TestEvaluateFail(t *testing.T) {
+func TestServiceEvaluateFail(t *testing.T) {
 	s := NewService()
 	endpoint := "/evaluate"
 
@@ -74,7 +74,7 @@ func TestEvaluateFail(t *testing.T) {
 	assert.ElementsMatch(t, errors, s.Errors())
 }
 
-func TestValidate(t *testing.T) {
+func TestServiceValidate(t *testing.T) {
 	s := NewService()
 	_, err := s.Evaluate("What is 7?")
 	assert.Nil(t, err)
@@ -83,7 +83,7 @@ func TestValidate(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestValidateFail(t *testing.T) {
+func TestServiceValidateFail(t *testing.T) {
 	s := NewService()
 	endpoint := "/validate"
 

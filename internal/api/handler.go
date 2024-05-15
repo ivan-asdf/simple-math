@@ -45,6 +45,11 @@ func (h *Handler) Evaluate(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
+	evalResponse, httpCode := h.evaluate(evalRequest)
+	c.JSON(httpCode, evalResponse)
+}
+
+func (h *Handler) evaluate(evalRequest Request) (EvaluateResponse, int) {
 	result, err := h.s.Evaluate(evalRequest.Expression)
 
 	var evalResponse EvaluateResponse
@@ -60,15 +65,14 @@ func (h *Handler) Evaluate(c *gin.Context) {
 			evalResponse.Error = err.Error()
 		}
 
-		c.JSON(httpCode, evalResponse)
-		return
+		return evalResponse, httpCode
 	}
 
 	evalResponse.Result = result
-	c.JSON(httpCode, evalResponse)
+	return evalResponse, httpCode
 }
 
-type ValidateRespone struct {
+type ValidateResponse struct {
 	Valid  bool   `json:"valid"`
 	Reason string `json:"reason,omitempty"`
 }
@@ -79,9 +83,14 @@ func (h *Handler) Validate(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
+	response, httpCode := h.validate(validateRequest)
+	c.JSON(httpCode, response)
+}
+
+func (h *Handler) validate(validateRequest Request) (ValidateResponse, int) {
 	err := h.s.Validate(validateRequest.Expression)
 
-	var validateResponse ValidateRespone
+	var validateResponse ValidateResponse
 	if err != nil {
 		validateResponse.Valid = false
 		validateResponse.Reason = err.Error()
@@ -89,7 +98,7 @@ func (h *Handler) Validate(c *gin.Context) {
 		validateResponse.Valid = true
 	}
 
-	c.JSON(http.StatusOK, validateResponse)
+	return validateResponse, 200
 }
 
 func (h *Handler) Errors(c *gin.Context) {
