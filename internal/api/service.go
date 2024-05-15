@@ -21,6 +21,12 @@ type ErrorLogKey struct {
 	errorType  string
 }
 
+const (
+	ErrorTypeSyntaxError          = "Syntax error"
+	ErrorTypeUnsupportedOperation = "Unsupported operation error"
+	ErrorTypeNonMathQuestion      = "Non-math question error"
+)
+
 func NewService() Service {
 	return Service{
 		lexer:            *lexer.NewLexer(),
@@ -33,11 +39,11 @@ func (s *Service) SaveError(endpoint string, expression string, err error) {
 	var errType string
 	switch {
 	case errors.As(err, &parser.SyntaxError{}):
-		errType = "Syntax error"
+		errType = ErrorTypeSyntaxError
 	case errors.As(err, &parser.UnsupportedOperationError{}):
-		errType = "Unsupported operation error"
+		errType = ErrorTypeUnsupportedOperation
 	case errors.Is(err, parser.NonMathQuestionError):
-		errType = "Non-math question error"
+		errType = ErrorTypeNonMathQuestion
 	default:
 		return
 	}
@@ -48,11 +54,7 @@ func (s *Service) SaveError(endpoint string, expression string, err error) {
 }
 
 func (s *Service) Evaluate(input string) (int, error) {
-	fmt.Println(input)
-	fmt.Println()
-
 	tokens := s.lexer.Lex(input)
-	fmt.Println(tokens)
 
 	parser := parser.NewParser(tokens)
 	expr, err := parser.Parse()
@@ -64,11 +66,7 @@ func (s *Service) Evaluate(input string) (int, error) {
 }
 
 func (s *Service) Validate(input string) error {
-	fmt.Println(input)
-	fmt.Println()
-
 	tokens := s.lexer.Lex(input)
-	fmt.Println(tokens)
 
 	parser := parser.NewParser(tokens)
 	_, err := parser.Parse()
