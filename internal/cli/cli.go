@@ -13,22 +13,20 @@ import (
 
 type Client struct {
 	client   *resty.Client
-	host     string
-	port     string
+	url      string
 	endpoint string
 }
 
-func NewCliClient(host string, port string, endpoint string) *Client {
+func NewCliClient(url string, endpoint string) *Client {
 	return &Client{
 		client:   resty.New(),
-		host:     host,
-		port:     port,
+		url:      url,
 		endpoint: endpoint,
 	}
 }
 
 func (c *Client) requestURL() string {
-	return "http://" + c.host + c.port + c.endpoint
+	return c.url + c.endpoint
 }
 
 func (c *Client) printCliPrompt() {
@@ -45,7 +43,7 @@ func formatResponse(body []byte) string {
 	var prettyJSON bytes.Buffer
 	err := json.Indent(&prettyJSON, body, "", "  ")
 	if err != nil {
-		return err.Error()
+		return fmt.Errorf("%s\n\n Failed to parse json body: %w", body, err).Error()
 	}
 	return prettyJSON.String()
 }
@@ -64,7 +62,7 @@ func (c *Client) makePostRequest(input string) string {
 	return formatResponse(resp.Body())
 }
 
-func (c *Client) makeGetRequest() string {
+func (c *Client) makeErrorsGetRequest() string {
 	resp, err := c.client.R().
 		Get(c.requestURL())
 	if err != nil {
@@ -76,7 +74,7 @@ func (c *Client) makeGetRequest() string {
 
 func (c *Client) Run() {
 	if c.endpoint == api.ErorrsEndpoint {
-		result := c.makeGetRequest()
+		result := c.makeErrorsGetRequest()
 		fmt.Println(result)
 		return
 	}

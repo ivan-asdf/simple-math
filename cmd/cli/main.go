@@ -51,6 +51,6 @@ func main() {
 		fmt.Printf("Invalid mode: %s\n", mode)
 		os.Exit(1)
 	}
-	cc := cli.NewCliClient("localhost", port, endpoint)
+	cc := cli.NewCliClient("http://localhost"+port, endpoint)
 	cc.Run()
 }
