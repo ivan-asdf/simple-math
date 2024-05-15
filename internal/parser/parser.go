@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/ivan-asdf/simple-math/internal/eval"
@@ -124,7 +123,6 @@ func (p *Parser) Parse() (*eval.Expr, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println()
 	err = p.parseInitialKeyword()
 	if err != nil {
 		return nil, err
@@ -136,7 +134,6 @@ func (p *Parser) Parse() (*eval.Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(expr)
 		if expr == nil {
 			break
 		}
