@@ -17,10 +17,8 @@ const (
 )
 
 var (
-	ErrEvalInvalidExpr      = errors.New("invalid expression")
-	ErrEvalDivisionByZero   = errors.New("division by zero")
-	ErrEvalNoneOperation    = errors.New(`"NONE" operation`)
-	ErrEvalUnknownOperation = errors.New("unknown operation")
+	ErrEvalInvalidExpr    = errors.New("invalid expression")
+	ErrEvalDivisionByZero = errors.New("division by zero")
 )
 
 type Expr struct {
@@ -70,6 +68,10 @@ func getOpString(op Op) string {
 }
 
 func (e *Expr) Evaluate() (int, error) {
+	if err := validate(e); err != nil {
+		return 0, err
+	}
+
 	if e.prev == nil {
 		return e.value, nil
 	}
@@ -90,9 +92,7 @@ func (e *Expr) Evaluate() (int, error) {
 			return 0, ErrEvalDivisionByZero
 		}
 		return result / e.value, nil
-	case OpNone, OpNoneEnd:
-		return 0, fmt.Errorf(`%w: %s`, ErrEvalNoneOperation, getOpString(e.op))
 	default:
-		return 0, fmt.Errorf("%w: %s", ErrEvalUnknownOperation, getOpString(e.op))
+		return 0, fmt.Errorf("%w: %v", ErrEvalInvalidExpr, e)
 	}
 }

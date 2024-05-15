@@ -1,10 +1,10 @@
 package lexer
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/ivan-asdf/simple-math/internal/token"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLex1(t *testing.T) {
@@ -23,9 +23,7 @@ func TestLex1(t *testing.T) {
 		{Value: "..word.", Type: token.Word, Begin: 28, End: 35},
 	}
 	resultTokens := l.Lex(input)
-	if !reflect.DeepEqual(resultTokens, expectedTokens) {
-		t.Errorf("Generated tokens are not as expected")
-	}
+	assert.Equal(t, expectedTokens, resultTokens, "Generated tokens should be equal to expected")
 }
 
 func TestLex2(t *testing.T) {
@@ -40,7 +38,5 @@ func TestLex2(t *testing.T) {
 		{Value: "?", Type: token.QuestionMarkKeyword, Begin: 23, End: 24},
 	}
 	resultTokens := l.Lex(input)
-	if !reflect.DeepEqual(resultTokens, expectedTokens) {
-		t.Errorf("Generated tokens are not as expected")
-	}
+	assert.Equal(t, expectedTokens, resultTokens, "Generated tokens should be equal to expected")
 }

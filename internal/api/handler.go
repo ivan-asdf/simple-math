@@ -50,18 +50,13 @@ func (h *Handler) Evaluate(c *gin.Context) {
 	var evalResponse EvaluateResponse
 	httpCode := http.StatusOK
 	if err != nil {
-		httpCode = http.StatusInternalServerError
-		evalResponse.Error = InternalServerError
-
 		switch {
-		case errors.Is(err, eval.ErrEvalDivisionByZero):
-			httpCode = http.StatusOK
-			evalResponse.Error = err.Error()
 		case errors.Is(err, eval.ErrEvalInvalidExpr):
-		case errors.Is(err, eval.ErrEvalNoneOperation):
-		case errors.Is(err, eval.ErrEvalUnknownOperation):
+			httpCode = http.StatusInternalServerError
+			evalResponse.Error = InternalServerError
+		case errors.Is(err, eval.ErrEvalDivisionByZero):
+			fallthrough
 		default:
-			httpCode = http.StatusOK
 			evalResponse.Error = err.Error()
 		}
 
